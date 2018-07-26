@@ -63,11 +63,15 @@ ini_set("smtp_port","587");
 
 	function display_results($url_status_array) {
 		$html = '';
+		$good_count = 0;
+		$bad_count = array();
 		foreach ($url_status_array as $url) {
 			if ($url['status'] == 200) {
 				$html .=  $url['link_html'] . "-------> Status: <span style='color:green; font-weight: bold;'>Working</span><br>";
+				$good_count++;
 			} else {
 				$html .=  $url['link_html'] . "-------> Status: <span style='color:red; font-weight: bold;'>Error</span> " . $url['status'] . "<br>";
+				
 			}
 		}
 		echo $html;
