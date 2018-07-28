@@ -7,6 +7,7 @@ get_header(); ?>
 		<main id="main" class="site-main" role="main">
 
 			<?php
+				//phpinfo();
 				include "crawl_html.php";
 			?>
 
