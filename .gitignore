@@ -10,6 +10,9 @@ wp-content/uploads/
 wp-content/mu-plugins/
 wp-content/wp-cache-config.php
 wp-content/plugins/hello.php
+wp-content/plugins/updraftplus/
+wp-content/plugins/wp-crontrol/
+
 
 /.htaccess
 /license.txt
@@ -18,3 +21,4 @@ wp-content/plugins/hello.php
 /sitemap.xml.gz
 wp-config.php
 mysql.txt
+

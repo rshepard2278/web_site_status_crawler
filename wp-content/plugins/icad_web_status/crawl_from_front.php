@@ -1,5 +1,4 @@
 <?php
-	$root =  plugin_dir_path( __FILE__ );
 	include($root . "crawl/url_input_form.php");
 	include($root . "crawl/initial_crawl_page.php");
 	include($root . "crawl/spider.class.php");

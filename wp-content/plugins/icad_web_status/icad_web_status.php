@@ -9,11 +9,12 @@
 *  License:     GPL2
 *  License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
-
-
+$root =  plugin_dir_path( __FILE__ );
+include($root . "options/init_options.php");
 
 function build_crawling_form_page( $atts ){
-	include "crawl_html.php";
+	include "crawl_from_front.php";
 	return "Complete";
 }
 add_shortcode( 'icad_crawl', 'build_crawling_form_page' );
+
