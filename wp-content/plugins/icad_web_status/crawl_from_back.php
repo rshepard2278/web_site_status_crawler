@@ -1,5 +1,6 @@
 <?php
 	
+
 	// TODO 
 	// 	Get Array of URLS to crawl
 	// 		Create an options screen that allows for the addition/removal of URLs
@@ -18,15 +19,56 @@
 	// 	Email report to an array of email address
 	// 		Create another options screen or use same that allows for the addition/removal of email addresses
 	// 		Send email on end of crawl
-	include($root . "crawl/initial_crawl_page.php");
-	include($root . "crawl/spider.class.php");
 
+	$dir =  plugin_dir_path( __FILE__ );
 	$crawled_urls = array();
 	$found_urls = array();
+	include($dir . "crawl/initial_crawl_page.php");
+		//die("initial_crawl_page included");
+	include($dir . "crawl/spider.class.php");
+		//die("spider.class.php included");
+	include($dir . "crawl/crawl_functions.php");
+		//die("crawl_funcitons.php included");
+	
+	const EMAIL = 'email';
+	const SITES	= 'sites';
 
-	include($root . "crawl/crawl_functions.php");
 
-	$url_status_array = crawl_site($url);
-	display_results($url_status_array);
 
+	$urls_to_crawl = get_icad_options(SITES);
+	echo "URLs to Crawl<br><pre>";
+	var_dump($urls_to_crawl);
+	echo "</pre>";
+	$emails_to_send = get_icad_options(EMAIL);
+
+	echo "Emails to Send<br><pre>";
+	var_dump($emails_to_send);
+	echo "</pre>";
+	//die("Loaded emails and urls");
+	foreach($urls_to_crawl as $url) {
+		echo "<br>Checking: " . $url;
+		if(check_site_status($url)) {
+			$message = "<br>" . $url . " is up";
+			die ($message);
+			$url_status_array = crawl_site($url);
+			foreach($emails_to_send as $email) {
+				send_email_report($url_status_array, $email);
+			}
+		} else {
+			echo "<br>" . $url . " is down";
+		}
+	}
+	
+	
+
+	function get_icad_options($type) {
+		$options = get_option( 'icad__settings' );
+		if($type == SITES) {
+			return $options['icad_site_list'];
+		} else if ($type == EMAIL) {
+			return $options['icad_email_list'];
+		} else {
+			error_log("Not correct type");
+		}
+	}
 ?>

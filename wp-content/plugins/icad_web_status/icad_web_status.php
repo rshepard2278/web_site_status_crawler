@@ -12,9 +12,15 @@
 $root =  plugin_dir_path( __FILE__ );
 include($root . "options/init_options.php");
 
-function build_crawling_form_page( $atts ){
+function crawl_from_front( $atts ){
 	include "crawl_from_front.php";
 	return "Complete";
 }
-add_shortcode( 'icad_crawl', 'build_crawling_form_page' );
+add_shortcode( 'icad_crawl_front', 'crawl_from_front' );
+
+function crawl_from_backend( $atts ){
+	include "crawl_from_back.php";
+	return "Complete";
+}
+add_shortcode( 'icad_crawl_back', 'crawl_from_backend' );
 

@@ -78,23 +78,50 @@ ini_set("smtp_port","587");
 		send_mail("Web Crawl Status", $html);
 	}
 
+	function send_email_report($url_status_array, $email = null) {
+		$html = '';
+		$good_count = 0;
+		$bad_count = array();
+		foreach ($url_status_array as $url) {
+			if ($url['status'] == 200) {
+				$html .=  $url['link_html'] . "-------> Status: <span style='color:green; font-weight: bold;'>Working</span><br>";
+				$good_count++;
+			} else {
+				$html .=  $url['link_html'] . "-------> Status: <span style='color:red; font-weight: bold;'>Error</span> " . $url['status'] . "<br>";
+				
+			}
+		}
+		echo $html;
+		send_mail("Web Crawl Status", $html, $email);
+	}
+
+	function check_site_status($url) {
+		$spider = new Spider($url);
+		$status  = $spider->startSpider();
+		if($status == 200) {
+			return true;
+		} else {
+			error_log("Site root url status !200");
+			return false;
+		}
+	}
+
 	// add the following to the functions.php file in WP
 			// function wpdocs_set_html_mail_content_type() {
 			// 	return 'text/html';
 			// }
 			// add_filter( 'wp_mail_content_type', 'wpdocs_set_html_mail_content_type' );
-	function send_mail($subject, $message ) {
+	function send_mail($subject, $message, $email ) {
 		$from = 'Web Crawler';
 		$email = 'webCrawler@testing.local';
 		$headers = 'From: '. $from . "\r\n" . 'Reply-To: ' . $email . "\r\n";
 		$headers .= "MIME-Version: 1.0\r\n";
 		$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-		$to = 'rick@insightcad.com';
 		// $sent = mail($to, $subject, $message, $headers);
 		// if($sent) {
 		// 	error_log("***************  Email Sent  ********************");
 		// } else {
 		// 	error_log(error_get_last()['message']);
 		// }
-		wp_mail( $to, $subject, $message, $headers);
+		wp_mail( $email, $subject, $message, $headers);
 	}

@@ -216,11 +216,14 @@ class Spider {
   * @return void
   */
   public function startSpider() {
-    $url = $this->root_url['scheme'].'://'.$this->root_url['host'].$this->root_url['path'];
+    $path = '';
+    if(isset($this->root_url['path'])) {
+      $path = $this->root_url['path'];
+    }
+    $url = $this->root_url['scheme'].'://'.$this->root_url['host']. $path;
     if (!empty($this->root_url['query'])) {
         $url = $url.'?'.$this->root_url['query'];
     }
-
     return $this->_fetchUrl($url);
   }
 }
