@@ -16,6 +16,7 @@
 		} else {
 			echo "<h2>Result - URL's Found</h2>";
 			$url_status_array = crawl_site($url);
+			die("Dead");
 			display_results($url_status_array);
 		}
 	}
