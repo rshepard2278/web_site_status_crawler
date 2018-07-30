@@ -38,8 +38,11 @@ ini_set("smtp_port","587");
 	}
 
 	function crawl_site($u){
-		global $crawled_urls;
+		$crawled_urls = array();
+		$found_urls = array();
+		echo $u;
 		$uen = urlencode($u);
+		echo "<br>uen: " . $uen;
 		$url_status_array = array();
 		//ob_start();
 		if((array_key_exists($uen,$crawled_urls) == 0 || $crawled_urls[$uen] < date("YmdHis",strtotime('-25 seconds', time())))){
@@ -48,8 +51,12 @@ ini_set("smtp_port","587");
 			foreach($html->find("a") as $li){
 				$url = perfect_url($li->href,$u);
 				$enurl = urlencode($url);
+
 				if($url != '' && substr($url,0,4) != "mail" && substr($url,0,4) != "java" && array_key_exists($enurl,$found_urls) == 0){
 					$found_urls[$enurl] = 1;
+
+					echo $url;
+					
 					$spider = new Spider($url);
 					$url_status_array[$url]['status']  = $spider->startSpider();
 				 	$url_status_array[$url]['link_html'] = "<a target='_blank' href='" . $url . "'>" . $url . "</a>";

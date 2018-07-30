@@ -20,9 +20,7 @@
  * @license    http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License v3
  * @version    0.1
  **/
-
 class Spider {
-
  /**
   * cURL connection handler
   * 
@@ -30,7 +28,6 @@ class Spider {
   * @access private
   */
   private $curl_session;
-
  /**
   * Root url value
   * 
@@ -41,7 +38,6 @@ class Spider {
                       'scheme' => 'http',
                       'host' => 'localhost',
                       'path' => '/');
-
  /**
   * All found links
   * 
@@ -49,7 +45,6 @@ class Spider {
   * @access public
   */
   public $all_links = array();
-
  /**
   * Allowed file types
   * 
@@ -57,7 +52,6 @@ class Spider {
   * @access private
   */
   private $accept_types = array('htm', 'html', 'php', 'php5', 'aspx');
-
  /**
   * Verbose spidering process
   * 
@@ -65,7 +59,6 @@ class Spider {
   * @access private
   */
   private $verbose = false;
-
  /**
   * Fetched urls
   * 
@@ -73,7 +66,6 @@ class Spider {
   * @access private
   */
   private $fetched_urls = 0;
-
  /**
   * Not fetched urls
   * 
@@ -81,7 +73,6 @@ class Spider {
   * @access private
   */
   private $not_fetched_urls = 0;
-
  /**
   * User agent string
   * 
@@ -89,7 +80,6 @@ class Spider {
   * @access private
   */
   private $user_agent = 'Spider website 0.1';
-
  /**
   * Constructor
   *
@@ -101,7 +91,6 @@ class Spider {
     $this->setRootURL($site);
     $this->curl_session = curl_init();
   }
-
  /**
   * Changes root url
   *
@@ -114,9 +103,6 @@ class Spider {
       $this->root_url = parse_url($site);
     }
   }
-
-
-
  /**
   * Allows file type being spidering
   *
@@ -129,7 +115,6 @@ class Spider {
       if (!in_array($extension, $this->accept_types)) array_push($this->accept_types, $extension);
     }
   }
-
  /**
   * Restricts file type from being spidered
   *
@@ -147,7 +132,6 @@ class Spider {
       $this->accept_types = array_filter($this->accept_types);
     }
   }
-
  /**
   * Checks if url allowed to be fetched
   *
@@ -182,8 +166,6 @@ class Spider {
     }
     return true; 
   } 
-
-
  /**
   * Fetches given url
   *
@@ -202,13 +184,10 @@ class Spider {
       curl_setopt($this->curl_session, CURLOPT_SSL_VERIFYHOST, 2);
       curl_setopt($this->curl_session, CURLOPT_SSL_VERIFYPEER, 0);
       curl_setopt($this->curl_session, CURLOPT_POST, 0);
-
       $result = curl_exec($this->curl_session);
       $info = curl_getinfo($this->curl_session);
-
       return $info['http_code'];
   }
-
  /**
   * Starts spidering
   *
@@ -216,11 +195,7 @@ class Spider {
   * @return void
   */
   public function startSpider() {
-    $path = '';
-    if(isset($this->root_url['path'])) {
-      $path = $this->root_url['path'];
-    }
-    $url = $this->root_url['scheme'].'://'.$this->root_url['host']. $path;
+    $url = $this->root_url['scheme'].'://'.$this->root_url['host'].$this->root_url['path'];
     if (!empty($this->root_url['query'])) {
         $url = $url.'?'.$this->root_url['query'];
     }

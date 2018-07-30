@@ -49,7 +49,7 @@
 		echo "<br>Checking: " . $url;
 		if(check_site_status($url)) {
 			$message = "<br>" . $url . " is up";
-			die ($message);
+			//die ($message);
 			$url_status_array = crawl_site($url);
 			foreach($emails_to_send as $email) {
 				send_email_report($url_status_array, $email);
