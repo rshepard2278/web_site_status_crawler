@@ -3,6 +3,7 @@
 	include($root . "crawl/url_input_form.php");
 	include($root . "crawl/initial_crawl_page.php");
 	include($root . "crawl/spider.class.php");
+	$emails_to_send = get_icad_options(EMAIL);
 	$crawled_urls = array();
 	$found_urls = array();
 	include($root . "crawl/crawl_functions.php");

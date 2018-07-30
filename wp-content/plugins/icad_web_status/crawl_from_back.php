@@ -24,42 +24,39 @@
 	$crawled_urls = array();
 	$found_urls = array();
 	include($dir . "crawl/initial_crawl_page.php");
-		//die("initial_crawl_page included");
 	include($dir . "crawl/spider.class.php");
-		//die("spider.class.php included");
 	include($dir . "crawl/crawl_functions.php");
-		//die("crawl_funcitons.php included");
 	
 	const EMAIL = 'email';
 	const SITES	= 'sites';
 
-
-
 	$urls_to_crawl = get_icad_options(SITES);
-	echo "URLs to Crawl<br><pre>";
-	var_dump($urls_to_crawl);
-	echo "</pre>";
 	$emails_to_send = get_icad_options(EMAIL);
+	$report = array();
 
-	echo "Emails to Send<br><pre>";
-	var_dump($emails_to_send);
-	echo "</pre>";
-	//die("Loaded emails and urls");
 	foreach($urls_to_crawl as $url) {
-		echo "<br>Checking: " . $url;
+		//echo "<br>Checking: " . $url;
 		if(check_site_status($url)) {
-			$message = "<br>" . $url . " is up";
-			//die ($message);
 			$url_status_array = crawl_site($url);
-			foreach($emails_to_send as $email) {
-				send_email_report($url_status_array, $email);
-			}
+			$report[$url] = get_status_report($url_status_array);
 		} else {
-			echo "<br>" . $url . " is down";
+			$report[$url] = 'Site is down';
 		}
 	}
+	$html = format_report($report);
 	
-	
+	foreach($emails_to_send as $email) {
+		send_mail("Web Crawl Status", $html, $email);
+	}
+
+
+	function format_report($report) {
+		echo "<pre>";
+		var_dump($report);
+		echo "</pre>";
+		die();
+		return $report;
+	}
 
 	function get_icad_options($type) {
 		$options = get_option( 'icad__settings' );

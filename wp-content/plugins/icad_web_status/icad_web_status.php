@@ -13,16 +13,16 @@ $root =  plugin_dir_path( __FILE__ );
 include($root . "options/init_options.php");
 
 function crawl_from_front( $atts ){
-	if($atts["type"] == "front"){
+	if($atts["from"] == "front"){
 		include "crawl_from_front.php";
 		return "Complete";
-	} else if($atts["type"] == "back") {
+	} else if($atts["from"] == "back") {
 		include "crawl_from_back.php";
 		return "Complete";
 	}
 	
 }
-add_shortcode( 'icad_crawl_front', 'crawl_from_front' );
+add_shortcode( 'icad_crawl', 'crawl_from_front' );
 
 // function crawl_from_backend( $atts ){
 // 	include "crawl_from_back.php";

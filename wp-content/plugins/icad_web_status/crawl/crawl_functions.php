@@ -40,32 +40,24 @@ ini_set("smtp_port","587");
 	function crawl_site($u){
 		$crawled_urls = array();
 		$found_urls = array();
-		echo $u;
 		$uen = urlencode($u);
-		echo "<br>uen: " . $uen;
 		$url_status_array = array();
-		//ob_start();
+
 		if((array_key_exists($uen,$crawled_urls) == 0 || $crawled_urls[$uen] < date("YmdHis",strtotime('-25 seconds', time())))){
 			$html = file_get_html($u);
 			$crawled_urls[$uen] = date("YmdHis");
 			foreach($html->find("a") as $li){
 				$url = perfect_url($li->href,$u);
 				$enurl = urlencode($url);
-
 				if($url != '' && substr($url,0,4) != "mail" && substr($url,0,4) != "java" && array_key_exists($enurl,$found_urls) == 0){
-					$found_urls[$enurl] = 1;
-
-					echo $url;
-					
+					$found_urls[$enurl] = 1;			
 					$spider = new Spider($url);
 					$url_status_array[$url]['status']  = $spider->startSpider();
 				 	$url_status_array[$url]['link_html'] = "<a target='_blank' href='" . $url . "'>" . $url . "</a>";
-
 				}
 			}
 		}
 		return $url_status_array;
-		//ob_end_clean();
 	}
 
 	function display_results($url_status_array) {
@@ -78,28 +70,36 @@ ini_set("smtp_port","587");
 				$good_count++;
 			} else {
 				$html .=  $url['link_html'] . "-------> Status: <span style='color:red; font-weight: bold;'>Error</span> " . $url['status'] . "<br>";
-				
-			}
-		}
-		echo $html;
-		send_mail("Web Crawl Status", $html);
-	}
-
-	function send_email_report($url_status_array, $email = null) {
-		$html = '';
-		$good_count = 0;
-		$bad_count = array();
-		foreach ($url_status_array as $url) {
-			if ($url['status'] == 200) {
-				$html .=  $url['link_html'] . "-------> Status: <span style='color:green; font-weight: bold;'>Working</span><br>";
-				$good_count++;
-			} else {
-				$html .=  $url['link_html'] . "-------> Status: <span style='color:red; font-weight: bold;'>Error</span> " . $url['status'] . "<br>";
-				
+				$bad_count++;
 			}
 		}
 		echo $html;
 		send_mail("Web Crawl Status", $html, $email);
+	}
+
+	function get_status_report($url_status_array) {
+		$html = '';
+		$good_count = 0;
+		$down_count = 0;
+		$pages_down = array();
+		foreach ($url_status_array as $url) {
+			if ($url['status'] == 200) {
+				$good_count++;
+			} else {
+				$down_count++;
+				array_push($pages_down, $url);
+			}
+		}
+		var_dump($pages_down);
+		$total_checked = $down_count + $good_count;
+		$up_percetage = round((($good_count / $total_checked) * 100),2);
+		$up_percetage = $up_percetage . "%";
+		$report = array(
+			"up_percetage" => $up_percetage,
+			"pages_checked" => $total_checked,
+			"pages_down"    => $pages_down
+		);
+		return $report;
 	}
 
 	function check_site_status($url) {
@@ -119,9 +119,10 @@ ini_set("smtp_port","587");
 			// }
 			// add_filter( 'wp_mail_content_type', 'wpdocs_set_html_mail_content_type' );
 	function send_mail($subject, $message, $email ) {
+		echo "Sending mail to: " . $email;
 		$from = 'Web Crawler';
-		$email = 'webCrawler@testing.local';
-		$headers = 'From: '. $from . "\r\n" . 'Reply-To: ' . $email . "\r\n";
+		$from = 'webCrawler@testing.local';
+		$headers = 'From: '. $from . "\r\n" . 'Reply-To: ' . $from . "\r\n";
 		$headers .= "MIME-Version: 1.0\r\n";
 		$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
 		// $sent = mail($to, $subject, $message, $headers);
@@ -130,5 +131,9 @@ ini_set("smtp_port","587");
 		// } else {
 		// 	error_log(error_get_last()['message']);
 		// }
-		wp_mail( $email, $subject, $message, $headers);
+		if(wp_mail($email, $subject, $message, $headers)) {
+			echo "Mail Sent";
+		} else {
+			echo "Email not sent";
+		}
 	}
